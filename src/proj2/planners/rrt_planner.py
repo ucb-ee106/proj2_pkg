@@ -37,6 +37,8 @@ class RRTGraph(object):
 class RRTPlanner(object):
 
     def __init__(self, config_space, max_iter=10000, expand_dist=0.3):
+        # config_space should be an object of type ConfigurationSpace
+        # (or a subclass of ConfigurationSpace).
         self.config_space = config_space
         # Maximum number of iterations to run RRT for:
         self.max_iter = max_iter
