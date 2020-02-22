@@ -95,8 +95,10 @@ def expanded_obstacles(obstacle_list, delta):
     obstacle_list is a list of (x, y, r) tuples.
 
     Usage:
-        with expanded_obstacles(obstacle_list):
-            # do things with expanded obstacle_list
+        with expanded_obstacles(obstacle_list, 0.1):
+            # do things with expanded obstacle_list. While inside this with 
+            # block, the radius of each element of obstacle_list has been
+            # expanded by 0.1 meters.
         # once we're out of the with block, obstacle_list will be
         # back to normal
     """
