@@ -11,7 +11,7 @@ import scipy.io as spio
 import numpy as np
 import matplotlib.pyplot as plt
 
-from configuration_space import BicycleConfigurationSpace, Plan
+from configuration_space import BicycleConfigurationSpace, Plan, expanded_obstacles
 
 #################### MATLAB PATH
 # Put the path to your matlab fodler here
@@ -31,7 +31,7 @@ class OptimizationPlanner(object):
         self.input_low_lims = self.config_space.input_low_lims
         self.input_high_lims = self.config_space.input_high_lims
 
-    def plan_to_pose(self, start, goal, dt=0.05, N=400):
+    def plan_to_pose(self, start, goal, dt=0.01, N=1000):
         """
             Uses your optimization based path planning algorithm to plan from the 
             start configuration to the goal configuration.
@@ -60,58 +60,57 @@ class OptimizationPlanner(object):
         print "======= Planning with OptimizationPlanner ======="
 
         # Expand obstacles to account for the radius of the robot.
-        for obs in self.config_space.obstacles:
-            obs[2] += self.config.robot_radius + 0.05
+        with expanded_obstacles(self.config_space.obstacles, self.config_space.robot_radius + 0.05):
 
-        self.plan = None
+            self.plan = None
 
-        infodict = {
-            "start": start,
-            "goal": goal,
-            "obstacles": self.config_space.obstacles,
-            "lower_state_bounds": self.config_space.low_lims,
-            "upper_state_bounds": self.config_space.high_lims,
-            "lower_input_bounds": self.input_low_lims,
-            "upper_input_bounds": self.input_high_lims,
-            "N": N,
-            "dt": dt
-        }
-        spio.savemat(matlab_path+'/input.mat', infodict)
+            infodict = {
+                "start": start,
+                "goal": goal,
+                "obstacles": self.config_space.obstacles,
+                "lower_state_bounds": self.config_space.low_lims,
+                "upper_state_bounds": self.config_space.high_lims,
+                "lower_input_bounds": self.input_low_lims,
+                "upper_input_bounds": self.input_high_lims,
+                "N": N,
+                "dt": dt
+            }
+            spio.savemat(matlab_path+'/input.mat', infodict)
 
-        ### Run the matlab engine
-        self.engine.addpath(matlab_path)
-        success = self.engine.run_optimization_planner()
+            ### Run the matlab engine
+            self.engine.addpath(matlab_path)
+            success = self.engine.run_optimization_planner()
 
-        if not success:
-            print "Failed to find a motion plan."
-            return None
+            if not success:
+                print "Failed to find a motion plan."
+                return None
 
-        ### Load the plan if successful
-        output = spio.loadmat(matlab_path+'/output.mat')
-        q_opt = output['q_opt']
-        u_opt = output['u_opt']
+            ### Load the plan if successful
+            output = spio.loadmat(matlab_path+'/output.mat')
+            q_opt = output['q_opt']
+            u_opt = output['u_opt']
 
-        times = []
-        target_positions = []
-        open_loop_inputs = []
-        t = 0
+            times = []
+            target_positions = []
+            open_loop_inputs = []
+            t = 0
 
-        for i in range(0, N):
-            qi = np.array([q_opt[0][i], q_opt[1][i], q_opt[2][i], q_opt[3][i]])
-            ui = np.array([u_opt[0][i], u_opt[1][i]])
+            for i in range(0, N):
+                qi = np.array([q_opt[0][i], q_opt[1][i], q_opt[2][i], q_opt[3][i]])
+                ui = np.array([u_opt[0][i], u_opt[1][i]])
+                times.append(t)
+                target_positions.append(qi)
+                open_loop_inputs.append(ui)
+                t = t + dt
+
+            # We add one extra step since q_opt has one more state that u_opt
+            qi = np.array([q_opt[0][N], q_opt[1][N], q_opt[2][N], q_opt[3][N]])
+            ui = np.array([0.0, 0.0])
             times.append(t)
             target_positions.append(qi)
             open_loop_inputs.append(ui)
-            t = t + dt
 
-        # We add one extra step since q_opt has one more state that u_opt
-        qi = np.array([q_opt[0][N], q_opt[1][N], q_opt[2][N], q_opt[3][N]])
-        ui = np.array([0.0, 0.0])
-        times.append(t)
-        target_positions.append(qi)
-        open_loop_inputs.append(ui)
-
-        self.plan = Plan(np.array(times), np.array(target_positions), np.array(open_loop_inputs), dt)
+            self.plan = Plan(np.array(times), np.array(target_positions), np.array(open_loop_inputs), dt)
         return self.plan
 
     def plot_execution(self):
@@ -139,3 +138,34 @@ class OptimizationPlanner(object):
             ax.plot(plan_x, plan_y, color='green')
 
         plt.show()
+
+def main():
+    """Use this function if you'd like to test without ROS.
+
+    If you're testing at home, you might have to do additional setup
+    to get matlab engine stuff. Look up how to install the matlab
+    engine api in python.
+    """
+    start = np.array([1, 1, 0, 0]) 
+    goal = np.array([9, 9, 0, 0])
+    xy_low = [0, 0]
+    xy_high = [10, 10]
+    phi_max = 0.6
+    u1_max = 2
+    u2_max = 3
+    obstacles = [[6, 3.5, 1.5], [3.5, 6.5, 1]]
+
+    config = BicycleConfigurationSpace( xy_low + [-1000, -phi_max],
+                                        xy_high + [1000, phi_max],
+                                        [-u1_max, -u2_max],
+                                        [u1_max, u2_max],
+                                        obstacles,
+                                        0.15)
+
+    engine = matlab.engine.start_matlab() # Start a matlab instance.
+    planner = OptimizationPlanner(config, engine)
+    plan = planner.plan_to_pose(start, goal)
+    planner.plot_execution()
+
+if __name__ == '__main__':
+    main()

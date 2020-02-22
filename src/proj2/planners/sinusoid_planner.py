@@ -9,23 +9,14 @@ from scipy.integrate import quad
 import sys
 from copy import copy
 import matplotlib.pyplot as plt
-import rospy
-from proj2_pkg.msg import BicycleCommandMsg, BicycleStateMsg
-from configuration_space import Plan
-import tf2_ros
-import tf
+from configuration_space import Plan, BicycleConfigurationSpace
 
 class SinusoidPlanner():
-    def __init__(self, config_space, l, max_phi, max_u1, max_u2):
+    def __init__(self, config_space):
         """
         Turtlebot planner that uses sequential sinusoids to steer to a goal pose.
 
         config_space should be a BicycleConfigurationSpace object.
-
-        Parameters
-        ----------
-        l : float
-            length of car
         """
         self.config_space = config_space
         self.l = config_space.robot_length
@@ -223,7 +214,6 @@ class SinusoidPlanner():
         beta1 = (omega/np.pi) * quad(integrand, 0, delta_t)[0]
 
         a1 = (delta_alpha*omega)/(np.pi*beta1)
-
               
         v1 = lambda t: a1*np.sin(omega*(t))
         v2 = lambda t: a2*np.cos(omega*(t))
@@ -321,3 +311,29 @@ class SinusoidPlanner():
             ]
 
         return Plan(np.array(times), np.array(positions), np.array(open_loop_inputs), dt=dt)
+
+def main():
+    """Use this function if you'd like to test without ROS.
+    """
+    start = np.array([1, 1, 0, 0]) 
+    goal = np.array([1, 1.3, 0, 0])
+    xy_low = [0, 0]
+    xy_high = [5, 5]
+    phi_max = 0.6
+    u1_max = 2
+    u2_max = 3
+    obstacles = []
+
+    config = BicycleConfigurationSpace( xy_low + [-1000, -phi_max],
+                                        xy_high + [1000, phi_max],
+                                        [-u1_max, -u2_max],
+                                        [u1_max, u2_max],
+                                        obstacles,
+                                        0.15)
+
+    planner = SinusoidPlanner(config)
+    plan = planner.plan_to_pose(start, goal, 0.01, 2.0)
+    planner.plot_execution()
+
+if __name__ == '__main__':
+    main()

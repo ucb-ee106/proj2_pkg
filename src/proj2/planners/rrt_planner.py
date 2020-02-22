@@ -36,7 +36,7 @@ class RRTGraph(object):
 
 class RRTPlanner(object):
 
-    def __init__(self, config_space, max_iter=1000, expand_dist=0.3):
+    def __init__(self, config_space, max_iter=10000, expand_dist=0.3):
         self.config_space = config_space
         # Maximum number of iterations to run RRT for:
         self.max_iter = max_iter
@@ -110,3 +110,33 @@ class RRTPlanner(object):
             ax.plot(plan_x, plan_y, color='green')
 
         plt.show()
+
+def main():
+    """Use this function if you'd like to test without ROS.
+
+    If you're testing at home without ROS, you might want
+    to get rid of the rospy.is_shutdown check in the main 
+    planner loop (and the corresponding rospy import).
+    """
+    start = np.array([1, 1, 0, 0]) 
+    goal = np.array([9, 9, 0, 0])
+    xy_low = [0, 0]
+    xy_high = [10, 10]
+    phi_max = 0.6
+    u1_max = 2
+    u2_max = 3
+    obstacles = [[6, 3.5, 1.5], [3.5, 6.5, 1]]
+
+    config = BicycleConfigurationSpace( xy_low + [-1000, -phi_max],
+                                        xy_high + [1000, phi_max],
+                                        [-u1_max, -u2_max],
+                                        [u1_max, u2_max],
+                                        obstacles,
+                                        0.15)
+
+    planner = RRTPlanner(config, max_iter=10000, expand_dist=0.8)
+    plan = planner.plan_to_pose(start, goal)
+    planner.plot_execution()
+
+if __name__ == '__main__':
+    main()

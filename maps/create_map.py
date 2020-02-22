@@ -73,7 +73,7 @@ def make_map2():
 	create_map([obstacle1, obstacle2, obstacle3, obstacle4, obstacle5], 10, 10, "map2")
 
 def make_empty_map():
-	create_map([], 10, 10, "empty")
+	create_map([], 5, 5, "empty")
 
 if __name__ == '__main__':
 	make_map1()

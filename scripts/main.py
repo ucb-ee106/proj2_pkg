@@ -25,8 +25,8 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-planner', '-p', type=str, default='sin', help=
         'Options: sin, rrt, opt.  Default: sin')
-    parser.add_argument('-x', type=float, default=0.0, help='Desired position in x')
-    parser.add_argument('-y', type=float, default=0.0, help='Desired position in y')
+    parser.add_argument('-x', type=float, default=1.0, help='Desired position in x')
+    parser.add_argument('-y', type=float, default=1.0, help='Desired position in y')
     parser.add_argument('-theta', type=float, default=0.0, help='Desired turtlebot angle')
     parser.add_argument('-phi', type=float, default=0.0, help='Desired angle of the (imaginary) steering wheel')
     return parser.parse_args()
@@ -85,8 +85,8 @@ if __name__ == '__main__':
                                         0.15)
 
     if args.planner == 'sin':
-        planner = SinusoidPlanner(0.3, 0.3, 2, 3)
-        plan = planner.plan_to_pose(controller.state, goal, 0.01, 15)
+        planner = SinusoidPlanner(config)
+        plan = planner.plan_to_pose(controller.state, goal, 0.01, 2.0)
 
     elif args.planner == 'rrt':
         planner = RRTPlanner(config, max_iter=10000, expand_dist=0.8)

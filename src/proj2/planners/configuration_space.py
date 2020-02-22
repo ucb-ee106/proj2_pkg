@@ -7,6 +7,7 @@ Author: Amay Saxena
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
+from contextlib import contextmanager
 
 class Plan(object):
     """Data structure to represent a motion plan. Stores plans in the form of
@@ -84,9 +85,48 @@ class Plan(object):
             return Plan(times, positions, open_loop_inputs, dt=dt)
         return reduce(chain_two_paths, paths)
 
+@contextmanager
+def expanded_obstacles(obstacle_list, delta):
+    """Context manager that edits obstacle list to increase the radius of
+    all obstacles by delta.
+
+    Usage:
+        with expanded_obstacles(obstacle_list):
+            # do things with expanded obstacle_list
+        # once we're out of the with block, obstacle_list will be
+        # back to normal
+    """
+    for obs in obstacle_list:
+        obs[2] += delta
+    yield obstacle_list
+    for obs in obstacle_list:
+        obs[2] -= delta
+
 class ConfigurationSpace(object):
+    """An abstract class for a Configuration Space. 
+    DO NOT FILL IN THIS CLASS
+
+    instead, fill in the BicycleConfigurationSpace at the bottom of the
+    file which inherits from this class.
+    """
 
     def __init__(self, dim, low_lims, high_lims, obstacles, dt=0.01):
+        """
+        Parameters
+        ----------
+        dim: dimension of the state spaceA: number of state variables.
+        low_lims: the lower bounds of the state variables. Should be an
+                iterable of length dim.
+        high_lims: the higher bounds of the state variables. Should be an
+                iterable of length dim.
+        obstacles: A list of obstacles. This could be in any representation
+            we choose, based on the application. In this project, for the bicycle
+            model, we assume each obstacle is a circle in x, y space, and then
+            obstacles is a list of (x, y, r) tuples specifying the center and 
+            radius of each obstacle.
+        dt: The discretization timestep our local planner should use when constructing
+            plans.
+        """
         self.dim = dim
         self.low_lims = np.array(low_lims)
         self.high_lims = np.array(high_lims)
@@ -143,7 +183,7 @@ class ConfigurationSpace(object):
             constitute finding a complete plan from c1 to c2. Remember that we only
             care about moving in some direction while respecting the kinemtics of
             the robot. You may perform this step by picking a number of motion
-            primitives, and then returning that primitive that brings you closest
+            primitives, and then returning the primitive that brings you closest
             to c2.
         """
         pass
@@ -188,7 +228,7 @@ class FreeEuclideanSpace(ConfigurationSpace):
         times = np.arange(0, total_time, self.dt)
         positions = p(times[:, None])
         velocities = np.tile(vel, (positions.shape[0], 1))
-        plan = Plan(times, positions, velocities)
+        plan = Plan(times, positions, velocities, dt=self.dt)
         return plan
 
 class BicycleConfigurationSpace(ConfigurationSpace):
@@ -197,7 +237,7 @@ class BicycleConfigurationSpace(ConfigurationSpace):
         Obstacles should be tuples (x, y, r), representing circles of 
         radius r centered at (x, y)
         We assume that the robot is circular and has radius equal to robot_radius
-        The state of the robot is defined as (x, y, theta, phi)
+        The state of the robot is defined as (x, y, theta, phi).
     """
     def __init__(self, low_lims, high_lims, input_low_lims, input_high_lims, obstacles, robot_radius):
         dim = 4
@@ -220,7 +260,7 @@ class BicycleConfigurationSpace(ConfigurationSpace):
         You can pass in any number of additional optional arguments if you
         would like to implement custom sampling heuristics. By default, the
         RRT implementation passes in the goal as an additional argument,
-        which can be used to implement a goal-biasing heuristic. 
+        which can be used to implement a goal-biasing heuristic.
         """
         pass
 
@@ -229,13 +269,16 @@ class BicycleConfigurationSpace(ConfigurationSpace):
         Returns true if a configuration c is in collision
         c should be a numpy.ndarray of size (4,)
         """
-        pass
+       pass
 
     def check_path_collision(self, path):
         """
         Returns true if the input path is in collision. The path
         is given as a Plan object. See configuration_space.py
         for details on the Plan interface.
+
+        You should also ensure that the path does not exceed any state bounds,
+        and the open loop inputs don't exceed input bounds.
         """
         pass
 
