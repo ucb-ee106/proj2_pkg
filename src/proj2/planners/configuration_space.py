@@ -109,21 +109,22 @@ def expanded_obstacles(obstacle_list, delta):
         obs[2] -= delta
 
 class ConfigurationSpace(object):
-    """An abstract class for a Configuration Space. 
-    DO NOT FILL IN THIS CLASS
+    """ An abstract class for a Configuration Space. 
+    
+        DO NOT FILL IN THIS CLASS
 
-    instead, fill in the BicycleConfigurationSpace at the bottom of the
-    file which inherits from this class.
+        Instead, fill in the BicycleConfigurationSpace at the bottom of the
+        file which inherits from this class.
     """
 
     def __init__(self, dim, low_lims, high_lims, obstacles, dt=0.01):
         """
         Parameters
         ----------
-        dim: dimension of the state spaceA: number of state variables.
+        dim: dimension of the state space: number of state variables.
         low_lims: the lower bounds of the state variables. Should be an
                 iterable of length dim.
-        high_lims: the higher bounds of the state variables. Should be an
+        high_lims: the upper bounds of the state variables. Should be an
                 iterable of length dim.
         obstacles: A list of obstacles. This could be in any representation
             we choose, based on the application. In this project, for the bicycle
