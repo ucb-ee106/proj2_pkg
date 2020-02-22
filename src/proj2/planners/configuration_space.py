@@ -89,6 +89,10 @@ class Plan(object):
 def expanded_obstacles(obstacle_list, delta):
     """Context manager that edits obstacle list to increase the radius of
     all obstacles by delta.
+    
+    Assumes obstacles are circles in the x-y plane and are given as tuples
+    of (x, y, r) specifying the center and radius of the obstacle. So
+    obstacle_list is a list of (x, y, r) tuples.
 
     Usage:
         with expanded_obstacles(obstacle_list):
