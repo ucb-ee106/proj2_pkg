@@ -49,7 +49,7 @@ class SinusoidPlanner():
             See configuration_space.Plan.
         """
 
-        print "======= Planning with OptimizationPlanner ======="
+        print "======= Planning with SinusoidPlanner ======="
 
         self.plan = None
         # This bit hasn't been exhaustively tested, so you might hit a singularity anyways
