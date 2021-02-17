@@ -10,7 +10,7 @@ import rospy
 import numpy as np
 import matplotlib.pyplot as plt
 from collections import defaultdict
-from configuration_space import FreeEuclideanSpace, BicycleConfigurationSpace, Plan
+from .configuration_space import FreeEuclideanSpace, BicycleConfigurationSpace, Plan
 
 class RRTGraph(object):
 
@@ -52,15 +52,15 @@ class RRTPlanner(object):
             Uses the RRT algorithm to plan from the start configuration
             to the goal configuration.
         """
-        print "======= Planning with RRT ======="
+        print("======= Planning with RRT =======")
         self.graph = RRTGraph(start)
         self.plan = None
-        print "Iteration:", 0
+        print("Iteration:", 0)
         for it in range(self.max_iter):
             sys.stdout.write("\033[F")
-            print "Iteration:", it + 1
+            print("Iteration:", it + 1)
             if rospy.is_shutdown():
-                print "Stopping path planner."
+                print("Stopping path planner.")
                 break
             rand_config = self.config_space.sample_config(goal)
             if self.config_space.check_collision(rand_config):
@@ -79,7 +79,7 @@ class RRTPlanner(object):
                 self.graph.add_node(goal, new_config, path_to_goal)
                 self.plan = self.graph.construct_path_to(goal)
                 return self.plan
-        print "Failed to find plan in allotted number of iterations."
+        print("Failed to find plan in allotted number of iterations.")
         return None
 
     def plot_execution(self):

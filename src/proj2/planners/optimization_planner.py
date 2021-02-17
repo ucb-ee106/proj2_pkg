@@ -4,14 +4,14 @@ Starter code for EECS C106B Spring 2020 Project 2.
 Author: Valmik Prabhu, Amay Saxena
 """
 
-import matlab
-import matlab.engine
+# import matlab
+# import matlab.engine
 import scipy as sp
 import scipy.io as spio
 import numpy as np
 import matplotlib.pyplot as plt
 
-from configuration_space import BicycleConfigurationSpace, Plan, expanded_obstacles
+from .configuration_space import BicycleConfigurationSpace, Plan, expanded_obstacles
 
 #################### MATLAB PATH
 # Put the path to your matlab fodler here
@@ -57,7 +57,7 @@ class OptimizationPlanner(object):
         """
         ### Convert all the info you need into a .mat file
 
-        print "======= Planning with OptimizationPlanner ======="
+        print("======= Planning with OptimizationPlanner =======")
 
         # Expand obstacles to account for the radius of the robot.
         with expanded_obstacles(self.config_space.obstacles, self.config_space.robot_radius + 0.05):
@@ -82,7 +82,7 @@ class OptimizationPlanner(object):
             success = self.engine.run_optimization_planner()
 
             if not success:
-                print "Failed to find a motion plan."
+                print("Failed to find a motion plan.")
                 return None
 
             ### Load the plan if successful

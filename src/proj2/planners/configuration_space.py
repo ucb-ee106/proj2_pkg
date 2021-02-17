@@ -83,7 +83,10 @@ class Plan(object):
             open_loop_inputs = np.concatenate((path1.open_loop_inputs, path2.open_loop_inputs[1:]), axis=0)
             dt = path1.dt
             return Plan(times, positions, open_loop_inputs, dt=dt)
-        return reduce(chain_two_paths, paths)
+        chained_path = None
+        for path in paths:
+            chained_path = chain_two_paths(chained_path, path)
+        return chained_path
 
 @contextmanager
 def expanded_obstacles(obstacle_list, delta):

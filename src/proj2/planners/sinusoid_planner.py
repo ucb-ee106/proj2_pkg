@@ -9,7 +9,7 @@ from scipy.integrate import quad
 import sys
 from copy import copy
 import matplotlib.pyplot as plt
-from configuration_space import Plan, BicycleConfigurationSpace
+from .configuration_space import Plan, BicycleConfigurationSpace
 
 class SinusoidPlanner():
     def __init__(self, config_space):
@@ -17,6 +17,10 @@ class SinusoidPlanner():
         Turtlebot planner that uses sequential sinusoids to steer to a goal pose.
 
         config_space should be a BicycleConfigurationSpace object.
+        Parameters
+        ----------
+        l : float
+            length of car
         """
         self.config_space = config_space
         self.l = config_space.robot_length
@@ -49,7 +53,7 @@ class SinusoidPlanner():
             See configuration_space.Plan.
         """
 
-        print "======= Planning with SinusoidPlanner ======="
+        print("======= Planning with SinusoidPlanner =======")
 
         self.plan = None
         # This bit hasn't been exhaustively tested, so you might hit a singularity anyways

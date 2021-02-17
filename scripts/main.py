@@ -11,8 +11,8 @@ import argparse
 from std_srvs.srv import Empty as EmptySrv
 import rospy
 
-import matlab
-import matlab.engine
+# import matlab
+# import matlab.engine
 
 from proj2_pkg.msg import BicycleCommandMsg, BicycleStateMsg
 from proj2.planners import SinusoidPlanner, RRTPlanner, OptimizationPlanner, BicycleConfigurationSpace
@@ -36,9 +36,9 @@ if __name__ == '__main__':
     args = parse_args()
 
     # reset turtlesim state
-    print 'Waiting for converter/reset service ...',
+    print('Waiting for converter/reset service ...')
     rospy.wait_for_service('/converter/reset')
-    print 'found!'
+    print('found!')
     reset = rospy.ServiceProxy('/converter/reset', EmptySrv)
     reset()
 
@@ -66,14 +66,14 @@ if __name__ == '__main__':
         raise ValueError("No robot information loaded on parameter server. Did you run init_env.launch?")
     u1_max = rospy.get_param("/bicycle_converter/converter/max_linear_velocity")
 
-    print "Obstacles:", obstacles
+    print("Obstacles:", obstacles)
     
     controller = BicycleModelController()
 
     rospy.sleep(1)
 
-    print "Initial State"
-    print controller.state
+    print("Initial State")
+    print(controller.state)
 
     goal = np.array([args.x, args.y, args.theta, args.phi])
 
@@ -97,15 +97,15 @@ if __name__ == '__main__':
         planner = OptimizationPlanner(config, engine)
         plan = planner.plan_to_pose(controller.state, goal)
     
-    print "Predicted Initial State"
-    print plan.start_position()
-    print "Predicted Final State"
-    print plan.end_position()
+    print("Predicted Initial State")
+    print(plan.start_position())
+    print("Predicted Final State")
+    print(plan.end_position())
 
     planner.plot_execution()
 
     controller.execute_plan(plan)
-    print "Final State"
-    print controller.state
+    print("Final State")
+    print(controller.state)
 
 

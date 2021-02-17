@@ -1,1 +1,1 @@
-from controller import BicycleModelController
+from .controller import BicycleModelController
