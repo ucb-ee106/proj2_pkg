@@ -106,10 +106,7 @@ class SinusoidPlanner():
         """
         Creates a plot of the planned path in the environment. Assumes that the 
         environment of the robot is in the x-y plane, and that the first two
-        components in the state space are x and y position. Also assumes 
-        plan_to_pose has been called on this instance already, so that self.graph
-        is populated. If planning was successful, then self.plan will be populated 
-        and it will be plotted as well.
+        components in the state space are x and y position.
         """
         ax = plt.subplot(1, 1, 1)
 

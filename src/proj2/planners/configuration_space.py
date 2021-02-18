@@ -325,5 +325,7 @@ class BicycleConfigurationSpace(ConfigurationSpace):
         You should spend some time thinking about what motion primitives would
         be good to use for a bicycle model robot. What kinds of motions are at
         our disposal?
+
+        This should return a cofiguration_space.Plan object.
         """
         pass

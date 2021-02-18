@@ -13,14 +13,6 @@ import matplotlib.pyplot as plt
 
 from .configuration_space import BicycleConfigurationSpace, Plan, expanded_obstacles
 
-#################### MATLAB PATH
-# Put the path to your matlab fodler here
-# e.g. matlab_path = '/home/cc/ee106b/sp20/staff/ee106b-taa/ros_workspaces/proj2/src/proj2_pkg/src/proj2/planners/matlab'
-
-matlab_path = None
-
-####################
-
 class OptimizationPlanner(object):
     def __init__(self, config_space, engine):
         self.config_space = config_space
