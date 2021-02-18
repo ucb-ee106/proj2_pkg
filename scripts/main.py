@@ -83,15 +83,18 @@ if __name__ == '__main__':
 
     if args.planner == 'sin':
         planner = SinusoidPlanner(config)
-        plan = planner.plan_to_pose(controller.state, goal, 0.01, 2.0)
+        ## Edit the dt and delta_t arguments to your needs.
+        plan = planner.plan_to_pose(controller.state, goal, dt=0.01, delta_t=2.0)
 
     elif args.planner == 'rrt':
-        planner = RRTPlanner(config, max_iter=10000, expand_dist=0.8)
-        plan = planner.plan_to_pose(controller.state, goal)
+        ## Edit the max_iter and expand_dist arguments to your needs.
+        planner = RRTPlanner(config)
+        plan = planner.plan_to_pose(controller.state, goal, max_iter=10000, expand_dist=0.8)
 
     elif args.planner == 'opt':
         planner = OptimizationPlanner(config)
-        plan = planner.plan_to_pose(controller.state, goal)
+        ## Edit the max_iter and expand_dist arguments to your needs.
+        plan = planner.plan_to_pose(controller.state, goal, dt=0.01, N=1000)
     
     print("Predicted Initial State")
     print(plan.start_position())
