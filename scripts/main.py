@@ -32,7 +32,7 @@ if __name__ == '__main__':
     rospy.init_node('planning', anonymous=False)
     args = parse_args()
 
-    # reset turtlesim state
+    # reset state
     print('Waiting for converter/reset service ...')
     rospy.wait_for_service('/converter/reset')
     print('found!')
