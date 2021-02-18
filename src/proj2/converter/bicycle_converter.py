@@ -22,7 +22,7 @@ class BicycleConverter():
             raise ValueError("Converter sim flag not found on parameter server")    
         self.sim = rospy.get_param("~converter/sim")
 
-        self.sim = True # 
+        self.sim = True # We will only use sim.
 
         if not rospy.has_param("~converter/length"):
             raise ValueError("Converter length not found on parameter server")    

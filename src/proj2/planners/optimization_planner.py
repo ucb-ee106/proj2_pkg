@@ -2,23 +2,23 @@
 """
 Starter code for EECS C106B Spring 2020 Project 2.
 Author: Valmik Prabhu, Amay Saxena
+
+Implements the optimization-based path planner. You shouldn't need to edt this file.
+Just place your completed optimization_planner_casadi.py file in the planners/ folder 
+(same folder as this file). It should then work out of the box.
 """
 
-# import matlab
-# import matlab.engine
 import scipy as sp
 import scipy.io as spio
 import numpy as np
 import matplotlib.pyplot as plt
 
 from .configuration_space import BicycleConfigurationSpace, Plan, expanded_obstacles
+from .optimization_planner_casadi import plan_to_pose
 
 class OptimizationPlanner(object):
-    def __init__(self, config_space, engine):
+    def __init__(self, config_space):
         self.config_space = config_space
-        # An instance of matlab. This is generated in main.py by calling
-        # engine = matlab.engine.start_matlab()
-        self.engine = engine
 
         self.input_low_lims = self.config_space.input_low_lims
         self.input_high_lims = self.config_space.input_high_lims
@@ -27,17 +27,10 @@ class OptimizationPlanner(object):
         """
             Uses your optimization based path planning algorithm to plan from the 
             start configuration to the goal configuration.
-
-            This function interfaces with your matlab code from homework.
-            We do this by saving all the information we need into a .mat
-            file, and then operating on that .mat file with your matlab
-            code. The result is saved in a .mat file, which we subsequently
-            load into python, before processing it and returning the generated
-            path as a Plan object.
-
-            NOTE: You will need to make sure that your solutions for
-            discrete_bicycle_dynamics.m use the right value for the length of the
-            robot.
+            This function interfaces with your python code from homework.
+            
+            Please place your completed optimization_planner_casadi.py file in the 
+            planners/ folder (same folder as this file).
 
             Args:
                 start: starting configuration of the robot.
@@ -47,7 +40,6 @@ class OptimizationPlanner(object):
                 N: How many waypoints would we like to have in our path from start
                    to goal
         """
-        ### Convert all the info you need into a .mat file
 
         print("======= Planning with OptimizationPlanner =======")
 
@@ -56,31 +48,12 @@ class OptimizationPlanner(object):
 
             self.plan = None
 
-            infodict = {
-                "start": start,
-                "goal": goal,
-                "obstacles": self.config_space.obstacles,
-                "lower_state_bounds": self.config_space.low_lims,
-                "upper_state_bounds": self.config_space.high_lims,
-                "lower_input_bounds": self.input_low_lims,
-                "upper_input_bounds": self.input_high_lims,
-                "N": N,
-                "dt": dt
-            }
-            spio.savemat(matlab_path+'/input.mat', infodict)
+            L = 0.3
 
-            ### Run the matlab engine
-            self.engine.addpath(matlab_path)
-            success = self.engine.run_optimization_planner()
-
-            if not success:
-                print("Failed to find a motion plan.")
-                return None
-
-            ### Load the plan if successful
-            output = spio.loadmat(matlab_path+'/output.mat')
-            q_opt = output['q_opt']
-            u_opt = output['u_opt']
+            q_opt, u_opt = plan_to_pose(np.array(start), np.array(goal), 
+                self.config_space.low_lims, self.config_space.high_lims, 
+                self.input_low_lims, self.input_high_lims, self.config_space.obstacles, 
+                L=L, n=N, dt=dt)
 
             times = []
             target_positions = []
@@ -110,9 +83,7 @@ class OptimizationPlanner(object):
         Creates a plot of the planned path in the environment. Assumes that the 
         environment of the robot is in the x-y plane, and that the first two
         components in the state space are x and y position. Also assumes 
-        plan_to_pose has been called on this instance already, so that self.graph
-        is populated. If planning was successful, then self.plan will be populated 
-        and it will be plotted as well.
+        plan_to_pose has been called on this instance already.
         """
         ax = plt.subplot(1, 1, 1)
         ax.set_aspect(1)
@@ -133,7 +104,6 @@ class OptimizationPlanner(object):
 
 def main():
     """Use this function if you'd like to test without ROS.
-
     If you're testing at home, you might have to do additional setup
     to get matlab engine stuff. Look up how to install the matlab
     engine api in python.
@@ -154,8 +124,7 @@ def main():
                                         obstacles,
                                         0.15)
 
-    engine = matlab.engine.start_matlab() # Start a matlab instance.
-    planner = OptimizationPlanner(config, engine)
+    planner = OptimizationPlanner(config)
     plan = planner.plan_to_pose(start, goal)
     planner.plot_execution()
 
