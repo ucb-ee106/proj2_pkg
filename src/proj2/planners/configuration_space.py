@@ -132,7 +132,7 @@ class ConfigurationSpace(object):
         obstacles: A list of obstacles. This could be in any representation
             we choose, based on the application. In this project, for the bicycle
             model, we assume each obstacle is a circle in x, y space, and then
-            obstacles is a list of (x, y, r) tuples specifying the center and 
+            obstacles is a list of [x, y, r] lists specifying the center and 
             radius of each obstacle.
         dt: The discretization timestep our local planner should use when constructing
             plans.
