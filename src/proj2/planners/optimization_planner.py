@@ -104,9 +104,6 @@ class OptimizationPlanner(object):
 
 def main():
     """Use this function if you'd like to test without ROS.
-    If you're testing at home, you might have to do additional setup
-    to get matlab engine stuff. Look up how to install the matlab
-    engine api in python.
     """
     start = np.array([1, 1, 0, 0]) 
     goal = np.array([9, 9, 0, 0])
