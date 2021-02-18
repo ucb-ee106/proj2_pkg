@@ -48,12 +48,10 @@ class OptimizationPlanner(object):
 
             self.plan = None
 
-            L = 0.3
-
             q_opt, u_opt = plan_to_pose(np.array(start), np.array(goal), 
                 self.config_space.low_lims, self.config_space.high_lims, 
                 self.input_low_lims, self.input_high_lims, self.config_space.obstacles, 
-                L=L, n=N, dt=dt)
+                L=self.config_space.robot_length, n=N, dt=dt)
 
             times = []
             target_positions = []
