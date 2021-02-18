@@ -90,8 +90,7 @@ if __name__ == '__main__':
         plan = planner.plan_to_pose(controller.state, goal)
 
     elif args.planner == 'opt':
-        engine = matlab.engine.start_matlab() # Start a matlab instance.
-        planner = OptimizationPlanner(config, engine)
+        planner = OptimizationPlanner(config)
         plan = planner.plan_to_pose(controller.state, goal)
     
     print("Predicted Initial State")
@@ -104,5 +103,3 @@ if __name__ == '__main__':
     controller.execute_plan(plan)
     print("Final State")
     print(controller.state)
-
-
