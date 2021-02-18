@@ -22,6 +22,8 @@ class BicycleConverter():
             raise ValueError("Converter sim flag not found on parameter server")    
         self.sim = rospy.get_param("~converter/sim")
 
+        self.sim = True # 
+
         if not rospy.has_param("~converter/length"):
             raise ValueError("Converter length not found on parameter server")    
         self.length = rospy.get_param("~converter/length")
@@ -165,7 +167,7 @@ class BicycleConverter():
 
 if __name__ == '__main__':
     rospy.init_node("Bicycle Conversion", anonymous=True)
-    rospy.loginfo("To Stop Turtlebot hit Ctrl-C")
+    rospy.loginfo("To Stop The Simulation hit Ctrl-C")
 
     converter = BicycleConverter()
     converter.run()

@@ -11,9 +11,6 @@ import argparse
 from std_srvs.srv import Empty as EmptySrv
 import rospy
 
-# import matlab
-# import matlab.engine
-
 from proj2_pkg.msg import BicycleCommandMsg, BicycleStateMsg
 from proj2.planners import SinusoidPlanner, RRTPlanner, OptimizationPlanner, BicycleConfigurationSpace
 from proj2.controller import BicycleModelController

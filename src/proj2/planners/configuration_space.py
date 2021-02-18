@@ -30,10 +30,7 @@ class Plan(object):
         self.open_loop_inputs = open_loop_inputs
 
     def __iter__(self):
-        # I have to do this in an ugly way because python2 sucks and
-        # I hate it.
-        for t, p, c in zip(self.times, self.positions, self.open_loop_inputs):
-            yield t, p, c
+        yield from zip(self.times, self.positions, self.open_loop_inputs)
 
     def __len__(self):
         return len(self.times)
@@ -41,7 +38,7 @@ class Plan(object):
     def get(self, t):
         """Returns the desired position and open loop input at time t.
         """
-        index = sum(self.times <= t)
+        index = int(np.sum(self.times <= t))
         index = index - 1 if index else 0
         return self.positions[index], self.open_loop_inputs[index]
 
@@ -93,9 +90,12 @@ def expanded_obstacles(obstacle_list, delta):
     """Context manager that edits obstacle list to increase the radius of
     all obstacles by delta.
     
-    Assumes obstacles are circles in the x-y plane and are given as tuples
-    of (x, y, r) specifying the center and radius of the obstacle. So
-    obstacle_list is a list of (x, y, r) tuples.
+    Assumes obstacles are circles in the x-y plane and are given as lists
+    of [x, y, r] specifying the center and radius of the obstacle. So
+    obstacle_list is a list of [x, y, r] lists.
+
+    Note we want the obstacles to be lists instead of tuples since tuples
+    are immutable and we would be unable to change the radii.
 
     Usage:
         with expanded_obstacles(obstacle_list, 0.1):
