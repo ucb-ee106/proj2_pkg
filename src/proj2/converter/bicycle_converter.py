@@ -22,8 +22,6 @@ class BicycleConverter():
             raise ValueError("Converter sim flag not found on parameter server")    
         self.sim = rospy.get_param("~converter/sim")
 
-        self.sim = True # We will only use sim.
-
         if not rospy.has_param("~converter/length"):
             raise ValueError("Converter length not found on parameter server")    
         self.length = rospy.get_param("~converter/length")
@@ -114,7 +112,7 @@ class BicycleConverter():
 
             # If we aren't using sim, get the state
             if not self.sim:
-                for i in range(10):
+                for i in range(100):
                     try:
                         pose = self.tf_buffer.lookup_transform(
                             self.fixed_frame, self.robot_frame, rospy.Time())
@@ -123,7 +121,7 @@ class BicycleConverter():
                             tf2_ros.ConnectivityException,
                             tf2_ros.ExtrapolationException):
                         pass
-                if i == 9:
+                if i == 99:
                     rospy.logerr("%s: Could not extract pose from TF. Using last-known transform", self._name)
                 self.state.x = pose.transform.translation.x
                 self.state.y = pose.transform.translation.y
@@ -167,7 +165,7 @@ class BicycleConverter():
 
 if __name__ == '__main__':
     rospy.init_node("Bicycle Conversion", anonymous=True)
-    rospy.loginfo("To Stop The Simulation hit Ctrl-C")
+    rospy.loginfo("To Stop Turtlebot hit Ctrl-C")
 
     converter = BicycleConverter()
     converter.run()

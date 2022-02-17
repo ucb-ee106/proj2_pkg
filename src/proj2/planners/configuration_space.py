@@ -30,7 +30,10 @@ class Plan(object):
         self.open_loop_inputs = open_loop_inputs
 
     def __iter__(self):
-        yield from zip(self.times, self.positions, self.open_loop_inputs)
+        # I have to do this in an ugly way because python2 sucks and
+        # I hate it.
+        for t, p, c in zip(self.times, self.positions, self.open_loop_inputs):
+            yield t, p, c
 
     def __len__(self):
         return len(self.times)
@@ -127,7 +130,7 @@ class ConfigurationSpace(object):
         dim: dimension of the state space: number of state variables.
         low_lims: the lower bounds of the state variables. Should be an
                 iterable of length dim.
-        high_lims: the upper bounds of the state variables. Should be an
+        high_lims: the higher bounds of the state variables. Should be an
                 iterable of length dim.
         obstacles: A list of obstacles. This could be in any representation
             we choose, based on the application. In this project, for the bicycle
@@ -279,7 +282,7 @@ class BicycleConfigurationSpace(ConfigurationSpace):
         Returns true if a configuration c is in collision
         c should be a numpy.ndarray of size (4,)
         """
-       pass
+        pass
 
     def check_path_collision(self, path):
         """

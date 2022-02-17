@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Starter code for EECS C106B Spring 2020 Project 2.
+Starter code for EECS C106B Spring 2022 Project 2.
 Author: Valmik Prabhu, Amay Saxena
 
 Implements the optimization-based path planner. You shouldn't need to edt this file.

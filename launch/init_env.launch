@@ -47,7 +47,7 @@
     <arg name="state_topic" default="/bicycle/state" />
 
     <!-- Frames -->
-    <arg name="fixed_frame" default="odom" />
+    <arg name="fixed_frame" default="fake_odom" />
     <arg name="robot_frame" default="base_link" />
 
     <!-- Length of imaginary car. -->
@@ -58,11 +58,11 @@
     <arg name="max_steering_angle" default="0.6" />
     <arg name="max_linear_velocity" default="2" />
 
-    <!-- Bicycle Converter node. -->
-    <node name="bicycle_converter"
-          pkg="proj2_pkg"
-          type="bicycle_converter.py"
-          output="screen">
+  <!-- Bicycle Converter node. -->
+  <node name="bicycle_converter"
+      pkg="proj2_pkg"
+      type="bicycle_converter.py"
+      output="screen">
 
     <param name="converter/sim" value="$(arg sim)" />
     <param name="converter/sim_command_topic" value="$(arg sim_command_topic)" />
