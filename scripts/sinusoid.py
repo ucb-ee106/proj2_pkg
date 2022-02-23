@@ -5,7 +5,7 @@ Author: Valmik Prabhu, Chris Correa
 """
 import matplotlib.pyplot as plt
 import rospy
-from lab3_pkg.msg import BicycleCommandMsg, BicycleStateMsg
+from proj2_pkg.msg import BicycleCommandMsg, BicycleStateMsg
 import numpy as np
 import tf2_ros
 import tf
