@@ -3,9 +3,7 @@
 Starter code for EECS C106B Spring 2022 Project 2.
 Author: Valmik Prabhu, Amay Saxena
 
-Implements the optimization-based path planner. You shouldn't need to edt this file.
-Just place your completed optimization_planner_casadi.py file in the planners/ folder 
-(same folder as this file). It should then work out of the box.
+Implements the optimization-based path planner.
 """
 
 import scipy as sp
