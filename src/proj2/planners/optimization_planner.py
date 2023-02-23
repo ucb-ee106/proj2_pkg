@@ -25,10 +25,6 @@ class OptimizationPlanner(object):
         """
             Uses your optimization based path planning algorithm to plan from the 
             start configuration to the goal configuration.
-            This function interfaces with your python code from homework.
-            
-            Please place your completed optimization_planner_casadi.py file in the 
-            planners/ folder (same folder as this file).
 
             Args:
                 start: starting configuration of the robot.
